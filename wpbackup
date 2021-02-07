@@ -1,0 +1,195 @@
+#!/bin/bash
+
+sudo sync; sync;
+
+# ----- ----- ----- ----- ----- ----- ----- -----
+#
+# Required software:
+# p7zip, p7zip-full, wp-cli, and optional s3cmd
+#
+# ----- ----- ----- ----- ----- ----- ----- -----
+
+# Chceck argument: site name (domain)
+if [[ $1 == *"."* ]]; then
+	echo "\$1: OK ($1)"
+else
+	echo ""	
+	echo "\$1: Correct syntax: sudo wpbackup [SITE] [TYPE: major, full, db or pswd to show passwords]"
+	echo ""	
+	exit 1
+fi
+
+# Chceck argument: job type (backup type)
+if [[ $2 == "major" ]] || [[ $2 == "full" ]] || [[ $2 == "db" ]] || [[ $2 == "pswd" ]]; then
+	echo "\$2: OK ($2)"
+else
+	echo ""	
+	echo "\$2: Correct syntax: sudo wpbackup [SITE] [TYPE: major, full, db or pswd to show passwords]"
+	echo ""	
+	exit 1
+fi
+
+# Chceck WP-CLI installed (for DB BackUp)
+if ! [ -x "$(command -v wp)" ]; then
+	echo 'ERROR: WP-CLI is not installed!' >&2
+	exit 1
+fi
+# Chceck 7z installed
+if ! [ -x "$(command -v 7z)" ]; then
+	echo 'ERROR: p7zip & p7zip-full is not installed!' >&2
+	exit 1
+fi
+
+
+SITE="$1"
+BACKUP_TYPE="$2"
+
+# ----- ----- SITE DIR schema ----- -----
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!|
+# +-+-+-+ +-+-+-+
+SITE_DIR="/var/www/"$SITE"/public_html/"
+# ----- ----- SITE DIR schema ----- -----
+
+
+# ----- ----- S3 CONFIGURATION ----- -----
+# !!! REMEMBER TO INSTALL AND CONFIGURE S3CMD !!!
+
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!|
+# +-+-+-+ +-+-+-+
+# Set to 1 to activate S3 (local copy will be deleted)
+BACKUP2S3=0
+
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!|
+# +-+-+-+ +-+-+-+
+# For example.com S3 cfg file:
+# /root/.s3cfg-oss-wpbackup/.example.com
+S3CFG=/root/.s3cfg-oss-wpbackup/.$SITE
+
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!|
+# +-+-+-+ +-+-+-+
+# s3://[BUCKET-NAME]/$SITE/
+S3DIR=s3://wpbackup/$SITE/
+
+# !!! REMEMBER TO INSTALL AND CONFIGURE S3CMD !!!
+# ----- ----- S3 CONFIGURATION ----- -----
+
+
+function f_pswd() {
+	# +-+-+-+ +-+-+-+
+	# |S|e|t| |I|t|!|
+	# +-+-+-+ +-+-+-+
+	# Set BASE PASSWORD for archive (eg. 512 a-z A-Z 0-9):
+	PSWD1=
+
+	# SHA512: site name
+	PSWD2="$(echo -n $SITE | sha512sum | cut -c1-128)"
+
+	# MASTER PASSWORD for archive (BASE + SHA512):
+	BACKUP_ARCHIVE_PASSWORD=$PSWD1$PSWD2
+}
+
+# Date and time generation 
+function f_time() {
+	DATA_D="$(date +"%Y%m%d")"
+	DATA_H="$(date +"%H%M%S")"
+	FILE_TIME=$DATA_D"-"$DATA_H
+}
+
+# File and directory names 
+function f_dir() {
+	f_time
+		
+	# ----- ----- Set MAIN working folder  ----- -----
+	# +-+-+-+ +-+-+-+
+	# |S|e|t| |I|t|!|
+	# +-+-+-+ +-+-+-+
+	BACKUP_MAIN_DIR="/backup/"
+	# ----- ----- Set MAIN working folder  ----- -----
+	
+	BACKUP_TEMP_DIR=$BACKUP_MAIN_DIR$SITE"_"$FILE_TIME"/"
+	BACKUP_ARCH_DIR=$BACKUP_MAIN_DIR"archive/"
+}
+
+# Create the required folders 
+function f_makedir() {
+	
+	f_dir
+	
+	if [ ! -d "$BACKUP_MAIN_DIR" ]; then
+		sudo mkdir $BACKUP_MAIN_DIR
+	fi
+	if [ ! -d "$BACKUP_TEMP_DIR" ]; then
+		sudo mkdir $BACKUP_TEMP_DIR
+	fi
+	if [ ! -d "$BACKUP_ARCH_DIR" ]; then
+		sudo mkdir $BACKUP_ARCH_DIR
+	fi
+}
+
+
+function f_backup {
+
+	f_makedir
+	
+	echo "----- ----- ----- ----- -----"
+	echo "SITE: "$SITE
+	echo "Typ: "$BACKUP_TYPE
+	echo "----- ----- ----- ----- -----"
+	
+	echo "Database dump..."
+	sudo wp db export $BACKUP_TEMP_DIR$SITE"_db_"$FILE_TIME.sql --allow-root --path=$SITE_DIR
+
+	if [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
+		echo "Copying files..."
+		sudo tar czPf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz $SITE_DIR
+	fi
+		
+	echo "Packing files..."
+	f_pswd
+	
+	# 7zip MAN:
+	# 7z a [zipfile-name] [files-to-be-zipped]
+	# -p : Set Password
+	# -mx=9 : Ultra compression
+	# -mhe : Encrypt file names
+	# -t7z : File type .7z
+	
+	sudo 7z a $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z $BACKUP_TEMP_DIR -t7z -mhe -mx=9 -p$BACKUP_ARCHIVE_PASSWORD
+				
+	if [[ $BACKUP2S3 == 1 ]]; then
+		echo "Sending to S3..."
+		sudo s3cmd put $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z $S3DIR$BACKUP_TYPE"/" --disable-multipart -c $S3CFG
+	fi
+	
+	# ----- ----- ----- ----- ----- ----- ----- -----
+	# Cleaning :
+	# Delete temporary folder 
+	sudo rm -rf $BACKUP_TEMP_DIR
+	
+	# Deleting the file (only if the copy on S3, otherwise stays)
+	if [[ $BACKUP2S3 == 1 ]]; then
+		sudo rm -rf $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z
+	fi
+	# ----- ----- ----- ----- ----- ----- ----- -----
+	
+}
+
+if [[ $BACKUP_TYPE == pswd ]]; then
+	f_pswd
+	echo ""
+	echo "PSWD1/2: "$PSWD1
+	echo ""
+	echo "PSWD2/2: "$PSWD2
+	echo ""
+	echo "PSWD: "$BACKUP_ARCHIVE_PASSWORD
+	echo ""
+else
+	f_backup
+fi
+
+
+exit
