@@ -116,7 +116,6 @@ function f_dir() {
 
 # Create the required folders 
 function f_makedir() {
-	
 	f_dir
 	
 	if [ ! -d "$BACKUP_MAIN_DIR" ]; then
@@ -132,7 +131,6 @@ function f_makedir() {
 
 
 function f_backup {
-
 	f_makedir
 	
 	echo "----- ----- ----- ----- -----"
@@ -175,7 +173,6 @@ function f_backup {
 		sudo rm -rf $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z
 	fi
 	# ----- ----- ----- ----- ----- ----- ----- -----
-	
 }
 
 if [[ $BACKUP_TYPE == pswd ]]; then
