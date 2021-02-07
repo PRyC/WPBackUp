@@ -1,6 +1,6 @@
 # WP BackUp Script
 
-BASH script for WordPress site backups with S3 support and password. 
+BASH script for WordPress site backups with S3 and password support. 
 
 ## Required software:
 p7zip p7zip-full sudo and optional s3cmd
