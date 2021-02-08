@@ -4,6 +4,11 @@ sudo sync; sync;
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 #
+#	WP BackUp Script
+#	https://github.com/PRyC/WPBackUp
+#
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+#
 # Required software:
 # bash, sha512sum, p7zip, p7zip-full, wp-cli, sudo and optional s3cmd
 #
