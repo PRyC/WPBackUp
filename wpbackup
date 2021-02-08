@@ -2,12 +2,12 @@
 
 sudo sync; sync;
 
-# ----- ----- ----- ----- ----- ----- ----- -----
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 #
 # Required software:
-# p7zip, p7zip-full, wp-cli, and optional s3cmd
+# bash, sha512sum, p7zip, p7zip-full, wp-cli, sudo and optional s3cmd
 #
-# ----- ----- ----- ----- ----- ----- ----- -----
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
 # Chceck argument: site name (domain)
 if [[ $1 == *"."* ]]; then
@@ -30,12 +30,12 @@ else
 fi
 
 # Chceck WP-CLI installed (for DB BackUp)
-if ! [ -x "$(command -v wp)" ]; then
+if ! [[ -x "$(command -v wp)" ]]; then
 	echo 'ERROR: WP-CLI is not installed!' >&2
 	exit 1
 fi
 # Chceck 7z installed
-if ! [ -x "$(command -v 7z)" ]; then
+if ! [[ -x "$(command -v 7z)" ]]; then
 	echo 'ERROR: p7zip & p7zip-full is not installed!' >&2
 	exit 1
 fi
@@ -118,13 +118,13 @@ function f_dir() {
 function f_makedir() {
 	f_dir
 	
-	if [ ! -d "$BACKUP_MAIN_DIR" ]; then
+	if [[ ! -d "$BACKUP_MAIN_DIR" ]]; then
 		sudo mkdir $BACKUP_MAIN_DIR
 	fi
-	if [ ! -d "$BACKUP_TEMP_DIR" ]; then
+	if [[ ! -d "$BACKUP_TEMP_DIR" ]]; then
 		sudo mkdir $BACKUP_TEMP_DIR
 	fi
-	if [ ! -d "$BACKUP_ARCH_DIR" ]; then
+	if [[ ! -d "$BACKUP_ARCH_DIR" ]]; then
 		sudo mkdir $BACKUP_ARCH_DIR
 	fi
 }
