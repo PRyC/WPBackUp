@@ -14,6 +14,8 @@ sudo sync; sync;
 #
 # Using the script:
 # sudo ./wpbackup [site name] [job]
+# eg.:
+# sudo ./wpbackup example.com full
 #
 # Remember to set the appropriate attributes for the script file: 
 # sudo chmod +x ./wpbackup
