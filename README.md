@@ -36,20 +36,25 @@ sudo wpbackup SITE TYPE
 Eg.:
 
 ```
-#BackuP WordPress databes for example.com site:
-sudo wpbackup example.com db 
+# BackuP WordPress databes for example.com site:
+sudo ./wpbackup example.com db 
 
 # BackUp Full WordPress for example.com site
-sudo wpbackup example.com full
+sudo ./wpbackup example.com full
 
 # BackUp MAJOR WordPress for example.com site
-sudo wpbackup example.com major
+sudo ./wpbackup example.com major
 
 # Display the password for the archive for example.com site
 # PSWD1, PSWD2 and BACKUP_ARCHIVE_PASSWORD
 # MASTER PASSWORD for archive (BASE + SHA512)
-sudo wpbackup example.com pswd
+sudo ./wpbackup example.com pswd
 
+```
+
+### Remember to set the appropriate attributes for the script file: 
+```
+sudo chmod +x ./wpbackup
 ```
 
 

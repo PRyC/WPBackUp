@@ -12,6 +12,12 @@ sudo sync; sync;
 # Required software:
 # bash, sha512sum, p7zip, p7zip-full, wp-cli, sudo and optional s3cmd
 #
+# Using the script:
+# sudo ./wpbackup [site name] [job]
+#
+# Remember to set the appropriate attributes for the script file: 
+# sudo chmod +x ./wpbackup
+#
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
 # Chceck argument: site name (domain)
