@@ -33,7 +33,7 @@ BACKUP_MAIN_DIR="/backup/"
 ## Usage:
 
 ```
-sudo wpbackup SITE TYPE
+sudo ./wpbackup SITE TYPE
 ```
 Eg.:
 
@@ -52,6 +52,15 @@ sudo ./wpbackup example.com major
 # MASTER PASSWORD for archive (BASE + SHA512)
 sudo ./wpbackup example.com pswd
 
+```
+Or move/copy to:
+
+```
+/usr/local/bin/
+```
+and run from anywhere:
+```
+sudo wpbackup SITE TYPE
 ```
 
 ### Remember to set the appropriate attributes for the script file: 
