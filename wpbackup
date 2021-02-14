@@ -59,30 +59,37 @@ BACKUP_TYPE="$2"
 
 # ----- ----- SITE DIR schema ----- -----
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!|
+# |S|e|t| |I|t|!| 1/7
 # +-+-+-+ +-+-+-+
 SITE_DIR="/var/www/"$SITE"/public_html/"
 # ----- ----- SITE DIR schema ----- -----
+
+# ----- ----- TAR ARCHIVE EXCLUDE ----- -----
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!| 2/7
+# +-+-+-+ +-+-+-+
+EXCLUDE="--exclude=/var/www/$SITE/public_html/wp-content/upgrade --exclude=/var/www/$SITE/public_html/wp-content/cache"
+# ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 
 
 # ----- ----- S3 CONFIGURATION ----- -----
 # !!! REMEMBER TO INSTALL AND CONFIGURE S3CMD !!!
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!|
+# |S|e|t| |I|t|!| 3/7
 # +-+-+-+ +-+-+-+
 # Set to 1 to activate S3 (local copy will be deleted)
 BACKUP2S3=0
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!|
+# |S|e|t| |I|t|!| 4/7
 # +-+-+-+ +-+-+-+
 # For example.com S3 cfg file:
 # /root/.s3cfg-oss-wpbackup/.example.com
 S3CFG=/root/.s3cfg-oss-wpbackup/.$SITE
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!|
+# |S|e|t| |I|t|!| 5/7
 # +-+-+-+ +-+-+-+
 # s3://[BUCKET-NAME]/$SITE/
 S3DIR=s3://wpbackup/$SITE/
@@ -93,7 +100,7 @@ S3DIR=s3://wpbackup/$SITE/
 
 function f_pswd() {
 	# +-+-+-+ +-+-+-+
-	# |S|e|t| |I|t|!|
+	# |S|e|t| |I|t|!| 6/7
 	# +-+-+-+ +-+-+-+
 	# Set BASE PASSWORD for archive (eg. 512 a-z A-Z 0-9):
 	PSWD1=
@@ -118,7 +125,7 @@ function f_dir() {
 		
 	# ----- ----- Set MAIN working folder  ----- -----
 	# +-+-+-+ +-+-+-+
-	# |S|e|t| |I|t|!|
+	# |S|e|t| |I|t|!| 7/7
 	# +-+-+-+ +-+-+-+
 	BACKUP_MAIN_DIR="/backup/"
 	# ----- ----- Set MAIN working folder  ----- -----
@@ -156,7 +163,7 @@ function f_backup {
 
 	if [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
 		echo "Copying files..."
-		sudo tar czPf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz $SITE_DIR
+		sudo tar czPf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz $EXCLUDE $SITE_DIR
 	fi
 		
 	echo "Packing files..."

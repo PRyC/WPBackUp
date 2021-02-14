@@ -11,6 +11,8 @@ bash, sha512sum, p7zip, p7zip-full, wp-cli, sudo and - optional - s3cmd
 SITE_DIR - SITE DIR schema, eg.:
 SITE_DIR="/var/www/"$SITE"/public_html/"
 
+EXCLUDE - Solders (or files) to be excluded from backup
+
 BACKUP2S3 - Set to 1 to activate S3 (local copy will be deleted)
 BACKUP2S3 - Set to 0 to local copy, eg.:
 BACKUP2S3=1
