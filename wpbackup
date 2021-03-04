@@ -24,6 +24,7 @@ sudo sync; sync;
 
 # Chceck argument: site name (domain)
 if [[ $1 == *"."* ]]; then
+	echo "----- ----- ----- ----- -----"
 	echo "\$1: OK ($1)"
 else
 	echo ""	
@@ -35,6 +36,7 @@ fi
 # Chceck argument: job type (backup type)
 if [[ $2 == "major" ]] || [[ $2 == "full" ]] || [[ $2 == "db" ]] || [[ $2 == "pswd" ]]; then
 	echo "\$2: OK ($2)"
+	echo "----- ----- ----- ----- -----"
 else
 	echo ""	
 	echo "\$2: Correct syntax: sudo wpbackup [SITE] [TYPE: major, full, db or pswd to show passwords]"
