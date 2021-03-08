@@ -161,11 +161,11 @@ function f_backup {
 	echo "----- ----- ----- ----- -----"
 	
 	echo "Database dump..."
-	sudo wp db export $BACKUP_TEMP_DIR$SITE"_db_"$FILE_TIME.sql --allow-root --path=$SITE_DIR
+	sudo wp db export $BACKUP_TEMP_DIR$SITE"_db_"$FILE_TIME.sql --allow-root --path=$SITE_DIR/
 
 	if [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
 		echo "Copying files..."
-		sudo tar czPf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz $EXCLUDE $SITE_DIR
+		sudo tar czPf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz $EXCLUDE $SITE_DIR/
 	fi
 		
 	echo "Packing files..."
