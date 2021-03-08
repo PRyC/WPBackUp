@@ -63,14 +63,14 @@ BACKUP_TYPE="$2"
 # +-+-+-+ +-+-+-+
 # |S|e|t| |I|t|!| 1/7
 # +-+-+-+ +-+-+-+
-SITE_DIR="/var/www/"$SITE"/public_html/"
+SITE_DIR="/var/www/"$SITE"/public_html"
 # ----- ----- SITE DIR schema ----- -----
 
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 # +-+-+-+ +-+-+-+
 # |S|e|t| |I|t|!| 2/7
 # +-+-+-+ +-+-+-+
-EXCLUDE="--exclude=/var/www/$SITE/public_html/wp-content/upgrade --exclude=/var/www/$SITE/public_html/wp-content/cache"
+EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/cache --exclude=$SITE_DIR/wp-content/.snapshots"
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 
 
