@@ -199,7 +199,7 @@ function f_backup {
 	
 	# Deleting the file (only if the copy on S3 and KEEP_LOCAL=0, otherwise stays)
 	if [[ $KEEP_LOCAL == 0 ]] && [[ $BACKUP2S3 == 1 ]]; then
-		echo "Kasowanie pliku..."
+		echo "Deleting a local file (backup archive)"
 		sudo rm -rf $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z
 	fi
 	# ----- ----- ----- ----- ----- ----- ----- -----
