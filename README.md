@@ -13,7 +13,10 @@ SITE_DIR="/var/www/"$SITE"/public_html/"
 
 EXCLUDE - Folders (or files) to be excluded from backup
 
-BACKUP2S3 - Set to 1 to activate S3 (local copy will be deleted)
+KEEP_LOCAL - Set 0 to delete the local copy after transfer to S3 (requires an active S3), 1 to keep, eg.:
+KEEP_LOCAL=0
+
+BACKUP2S3 - Set to 1 to activate S3 
 BACKUP2S3 - Set to 0 to local copy, eg.:
 BACKUP2S3=1
 
