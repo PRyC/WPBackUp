@@ -59,16 +59,23 @@ fi
 SITE="$1"
 BACKUP_TYPE="$2"
 
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!| 1/8
+# +-+-+-+ +-+-+-+
+# Delete (0) or leave (1) the archive on the server 
+# "0" only works when backup on S3 is active!
+KEEP_LOCAL=0
+
 # ----- ----- SITE DIR schema ----- -----
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 1/7
+# |S|e|t| |I|t|!| 2/8
 # +-+-+-+ +-+-+-+
 SITE_DIR="/var/www/"$SITE"/public_html"
 # ----- ----- SITE DIR schema ----- -----
 
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 2/7
+# |S|e|t| |I|t|!| 3/8
 # +-+-+-+ +-+-+-+
 EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/cache --exclude=$SITE_DIR/wp-content/.snapshots"
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
@@ -78,20 +85,20 @@ EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/c
 # !!! REMEMBER TO INSTALL AND CONFIGURE S3CMD !!!
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 3/7
+# |S|e|t| |I|t|!| 4/8
 # +-+-+-+ +-+-+-+
-# Set to 1 to activate S3 (local copy will be deleted)
+# Set to 1 to activate S3
 BACKUP2S3=0
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 4/7
+# |S|e|t| |I|t|!| 5/8
 # +-+-+-+ +-+-+-+
 # For example.com S3 cfg file:
 # /root/.s3cfg-oss-wpbackup/.example.com
 S3CFG=/root/.s3cfg-oss-wpbackup/.$SITE
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 5/7
+# |S|e|t| |I|t|!| 6/8
 # +-+-+-+ +-+-+-+
 # s3://[BUCKET-NAME]/$SITE/
 S3DIR=s3://wpbackup/$SITE/
@@ -102,7 +109,7 @@ S3DIR=s3://wpbackup/$SITE/
 
 function f_pswd() {
 	# +-+-+-+ +-+-+-+
-	# |S|e|t| |I|t|!| 6/7
+	# |S|e|t| |I|t|!| 7/8
 	# +-+-+-+ +-+-+-+
 	# Set BASE PASSWORD for archive (eg. 512 a-z A-Z 0-9):
 	PSWD1=
@@ -127,7 +134,7 @@ function f_dir() {
 		
 	# ----- ----- Set MAIN working folder  ----- -----
 	# +-+-+-+ +-+-+-+
-	# |S|e|t| |I|t|!| 7/7
+	# |S|e|t| |I|t|!| 8/8
 	# +-+-+-+ +-+-+-+
 	BACKUP_MAIN_DIR="/backup/"
 	# ----- ----- Set MAIN working folder  ----- -----
@@ -190,8 +197,9 @@ function f_backup {
 	# Delete temporary folder 
 	sudo rm -rf $BACKUP_TEMP_DIR
 	
-	# Deleting the file (only if the copy on S3, otherwise stays)
-	if [[ $BACKUP2S3 == 1 ]]; then
+	# Deleting the file (only if the copy on S3 and KEEP_LOCAL=0, otherwise stays)
+	if [[ $KEEP_LOCAL == 0 ]] && [[ $BACKUP2S3 == 1 ]]; then
+		echo "Kasowanie pliku..."
 		sudo rm -rf $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z
 	fi
 	# ----- ----- ----- ----- ----- ----- ----- -----
