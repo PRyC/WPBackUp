@@ -77,7 +77,7 @@ SITE_DIR="/var/www/"$SITE"/public_html"
 # +-+-+-+ +-+-+-+
 # |S|e|t| |I|t|!| 3/8
 # +-+-+-+ +-+-+-+
-EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/cache --exclude=$SITE_DIR/wp-content/.snapshots"
+EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/cache --exclude=$SITE_DIR/wp-content/.snapshots --exclude=$SITE_DIR/.git"
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 
 
