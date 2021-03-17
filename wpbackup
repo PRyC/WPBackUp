@@ -73,6 +73,13 @@ KEEP_LOCAL=0
 SITE_DIR="/var/www/"$SITE"/public_html"
 # ----- ----- SITE DIR schema ----- -----
 
+if [[ ! -f "$SITE_DIR"/wp-config.php ]]; then
+	echo ""	
+    echo "Missing wp-config.php file. Are You sure this is a WordPress site?"
+	echo ""	
+	exit 0
+fi
+
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 # +-+-+-+ +-+-+-+
 # |S|e|t| |I|t|!| 3/8
