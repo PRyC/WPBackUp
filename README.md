@@ -16,6 +16,9 @@ EXCLUDE - Folders (or files) to be excluded from backup
 KEEP_LOCAL - Set 0 to delete the local copy after transfer to S3 (requires an active S3), 1 to keep, eg.:
 KEEP_LOCAL=0
 
+UPDATE - Update WP + themes + plugins AFTER full or major backup (1 - yes), eg.:
+UPDATE=1
+
 BACKUP2S3 - Set to 1 to activate S3 
 BACKUP2S3 - Set to 0 to local copy, eg.:
 BACKUP2S3=1

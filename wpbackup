@@ -65,6 +65,9 @@ BACKUP_TYPE="$2"
 # Delete (0) or leave (1) the archive on the server 
 # "0" only works when backup on S3 is active!
 KEEP_LOCAL=0
+# Update WP + themes + plugins AFTER full or major backup (1 - yes):
+UPDATE=1
+
 
 # ----- ----- SITE DIR schema ----- -----
 # +-+-+-+ +-+-+-+
@@ -73,7 +76,7 @@ KEEP_LOCAL=0
 SITE_DIR="/var/www/"$SITE"/public_html"
 # ----- ----- SITE DIR schema ----- -----
 
-if [[ ! -f "$SITE_DIR"/wp-config.php ]]; then
+if [ $BACKUP_TYPE != "pswd" ] && [[ ! -f "$SITE_DIR"/wp-config.php ]]; then
 	echo ""	
     echo "Missing wp-config.php file. Are You sure this is a WordPress site?"
 	echo ""	
@@ -210,6 +213,17 @@ function f_backup {
 		sudo rm -rf $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z
 	fi
 	# ----- ----- ----- ----- ----- ----- ----- -----
+	
+	# ----- ----- ----- ----- ----- ----- ----- -----
+	if [[ $UPDATE == 1 ]] && [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
+		echo "Update..."
+		cd $SITE_DIR
+		sudo wp core update --allow-root
+		sudo wp plugin update --all --allow-root
+		sudo wp theme update --all --allow-root
+	fi
+	# ----- ----- ----- ----- ----- ----- ----- -----
+	
 }
 
 if [[ $BACKUP_TYPE == pswd ]]; then
