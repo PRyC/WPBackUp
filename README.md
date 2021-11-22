@@ -1,4 +1,4 @@
-# WP BackUp Script
+# WP BackUp Script (WordPress BackUp Script)
 
 BASH script for WordPress site backups with S3 and password support. 
 
