@@ -215,7 +215,7 @@ function f_backup {
 	# ----- ----- ----- ----- ----- ----- ----- -----
 	
 	# ----- ----- ----- ----- ----- ----- ----- -----
-	if [[ $UPDATE == 1 ]] && [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
+	if [[ $UPDATE == 1 ]] && [[ $BACKUP_TYPE == full ]] || [[ $UPDATE == 1 ]] && [[ $BACKUP_TYPE == major ]]; then
 		echo "Update..."
 		cd $SITE_DIR
 		sudo wp core update --allow-root
