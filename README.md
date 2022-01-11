@@ -13,6 +13,9 @@ SITE_DIR="/var/www/"$SITE"/public_html/"
 
 EXCLUDE - Folders (or files) to be excluded from backup
 
+SPLIT_ARCH - Split tar file
+SPLIT_ARCH_SIZE - Split archive size, eg 20M = 20 MB
+
 KEEP_LOCAL - Set 0 to delete the local copy after transfer to S3 (requires an active S3), 1 to keep, eg.:
 KEEP_LOCAL=0
 

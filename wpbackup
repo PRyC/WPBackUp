@@ -60,7 +60,7 @@ SITE="$1"
 BACKUP_TYPE="$2"
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 1/8
+# |S|e|t| |I|t|!| 1/9
 # +-+-+-+ +-+-+-+
 # Delete (0) or leave (1) the archive on the server 
 # "0" only works when backup on S3 is active!
@@ -71,7 +71,7 @@ UPDATE=1
 
 # ----- ----- SITE DIR schema ----- -----
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 2/8
+# |S|e|t| |I|t|!| 2/9
 # +-+-+-+ +-+-+-+
 SITE_DIR="/var/www/"$SITE"/public_html"
 # ----- ----- SITE DIR schema ----- -----
@@ -83,9 +83,21 @@ if [ $BACKUP_TYPE != "pswd" ] && [[ ! -f "$SITE_DIR"/wp-config.php ]]; then
 	exit 0
 fi
 
+# ----- ----- SPLIT TAR ARCHIVE ----- -----
+# +-+-+-+ +-+-+-+
+# |S|e|t| |I|t|!| 3/9
+# +-+-+-+ +-+-+-+
+# Set 1 to split:
+SPLIT_ARCH=0
+# Split archive size, eg 20M = 20 MB
+SPLIT_ARCH_SIZE=20M
+# Restore:
+# cat FILE_BAME.tar.gz_split-* | tar xzvf -
+# ----- ----- SPLIT TAR ARCHIVE ----- -----
+
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 3/8
+# |S|e|t| |I|t|!| 4/9
 # +-+-+-+ +-+-+-+
 EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/cache --exclude=$SITE_DIR/wp-content/.snapshots --exclude=$SITE_DIR/.git"
 # ----- ----- TAR ARCHIVE EXCLUDE ----- -----
@@ -95,20 +107,20 @@ EXCLUDE="--exclude=$SITE_DIR/wp-content/upgrade --exclude=$SITE_DIR/wp-content/c
 # !!! REMEMBER TO INSTALL AND CONFIGURE S3CMD !!!
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 4/8
+# |S|e|t| |I|t|!| 5/9
 # +-+-+-+ +-+-+-+
 # Set to 1 to activate S3
 BACKUP2S3=0
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 5/8
+# |S|e|t| |I|t|!| 6/9
 # +-+-+-+ +-+-+-+
 # For example.com S3 cfg file:
 # /root/.s3cfg-oss-wpbackup/.example.com
 S3CFG=/root/.s3cfg-oss-wpbackup/.$SITE
 
 # +-+-+-+ +-+-+-+
-# |S|e|t| |I|t|!| 6/8
+# |S|e|t| |I|t|!| 7/9
 # +-+-+-+ +-+-+-+
 # s3://[BUCKET-NAME]/$SITE/
 S3DIR=s3://wpbackup/$SITE/
@@ -119,7 +131,7 @@ S3DIR=s3://wpbackup/$SITE/
 
 function f_pswd() {
 	# +-+-+-+ +-+-+-+
-	# |S|e|t| |I|t|!| 7/8
+	# |S|e|t| |I|t|!| 8/9
 	# +-+-+-+ +-+-+-+
 	# Set BASE PASSWORD for archive (eg. 512 a-z A-Z 0-9):
 	PSWD1=
@@ -144,7 +156,7 @@ function f_dir() {
 		
 	# ----- ----- Set MAIN working folder  ----- -----
 	# +-+-+-+ +-+-+-+
-	# |S|e|t| |I|t|!| 8/8
+	# |S|e|t| |I|t|!| 9/9
 	# +-+-+-+ +-+-+-+
 	BACKUP_MAIN_DIR="/backup/"
 	# ----- ----- Set MAIN working folder  ----- -----
@@ -183,6 +195,15 @@ function f_backup {
 	if [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
 		echo "Copying files..."
 		sudo tar czPf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz $EXCLUDE $SITE_DIR/
+	fi
+	
+	if [[ $BACKUP_TYPE == full ]] && [[ $SPLIT_ARCH == 1 ]] || [[ $BACKUP_TYPE == major ]] && [[ $SPLIT_ARCH == 1 ]]; then
+		echo "Split file..."
+		
+		sudo split -b $SPLIT_ARCH_SIZE $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz "$BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz_split-"
+		
+		echo "Deleting base ARCH (no split)"
+		sudo rm -rf $BACKUP_TEMP_DIR$SITE"_www_"$FILE_TIME.tar.gz
 	fi
 		
 	echo "Packing files..."
