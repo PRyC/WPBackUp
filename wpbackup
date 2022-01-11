@@ -192,10 +192,12 @@ function f_backup {
 	# 7z a [zipfile-name] [files-to-be-zipped]
 	# -p : Set Password
 	# -mx=9 : Ultra compression
+	# -mx=9 : normal --//--
+	# -mmt=1 : 1 core CPU
 	# -mhe : Encrypt file names
 	# -t7z : File type .7z
 	
-	sudo 7z a $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z $BACKUP_TEMP_DIR -t7z -mhe -mx=9 -p$BACKUP_ARCHIVE_PASSWORD
+	sudo 7z a $BACKUP_ARCH_DIR$SITE"_wpbackup_"$BACKUP_TYPE"_"$FILE_TIME.7z $BACKUP_TEMP_DIR -t7z -mhe -mx=5 -mmt=1 -p$BACKUP_ARCHIVE_PASSWORD
 				
 	if [[ $BACKUP2S3 == 1 ]]; then
 		echo "Sending to S3..."
