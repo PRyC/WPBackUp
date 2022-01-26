@@ -237,13 +237,15 @@ function f_backup {
 	fi
 	# ----- ----- ----- ----- ----- ----- ----- -----
 	
-	# ----- ----- ----- ----- ----- ----- ----- -----
-	if [[ $UPDATE == 1 ]] && [[ $BACKUP_TYPE == full ]] || [[ $UPDATE == 1 ]] && [[ $BACKUP_TYPE == major ]]; then
-		echo "Update..."
-		cd $SITE_DIR
-		sudo wp core update --allow-root
-		sudo wp plugin update --all --allow-root
-		sudo wp theme update --all --allow-root
+		# ----- ----- ----- ----- ----- ----- ----- -----
+	if [[ $UPDATE == 1 ]]; then
+		if [[ $BACKUP_TYPE == full ]] || [[ $BACKUP_TYPE == major ]]; then
+			echo "Update..."
+			cd $SITE_DIR
+			sudo wp core update --allow-root
+			sudo wp plugin update --all --allow-root
+			sudo wp theme update --all --allow-root
+		fi
 	fi
 	# ----- ----- ----- ----- ----- ----- ----- -----
 	
